@@ -1,12 +1,8 @@
-const { chromium } = require("playwright");
+const { chromium } = require("playwright-chromium");
 
 (async () => {
-  console.log("🤖 Avvio test Playwright");
-
-  // Headless obbligatorio su Render
-  const browser = await chromium.launch({ headless: true });
+  const browser = await chromium.launch({ headless: true }); // obbligatorio su Render
   const page = await browser.newPage();
-
   const URL = "https://carphub.it/";
   console.log("🌍 Vado su:", URL);
 
@@ -15,8 +11,8 @@ const { chromium } = require("playwright");
 
   const selector =
     "#root > div.min-h-screen.bg-background > header > div > div > div > a > button";
-  console.log("🔍 Cerco il bottone...");
 
+  console.log("🔍 Cerco il bottone...");
   await page.waitForSelector(selector, { timeout: 15000 });
   console.log("✅ Bottone trovato");
 
@@ -30,8 +26,7 @@ const { chromium } = require("playwright");
   await page.click(selector);
   console.log("🎉 Bottone cliccato correttamente");
 
-  await page.waitForTimeout(4000); // solo per vedere cosa succede
+  await page.waitForTimeout(4000);
   await browser.close();
-
   console.log("🛑 Browser chiuso, test finito");
 })();
