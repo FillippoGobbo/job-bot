@@ -1,31 +1,42 @@
-console.log("🤖 Bot avviato correttamente");
-
-setInterval(() => {
-  console.log("Bot online e in esecuzione...");
-}, 60000);
-
 const { chromium } = require("playwright");
 
 (async () => {
-  const browser = await chromium.launch({ headless: true }); // invisibile
-  const context = await browser.newContext();
-  const page = await context.newPage();
+  console.log("🤖 Avvio test Playwright");
 
-  // Vai al sito
-  await page.goto("https://carphub.it");
+  const browser = await chromium.launch({
+    headless: false, // 🔥 VISIBILE per il test
+    slowMo: 200, // 🔥 rallenta per vedere i click
+  });
 
-  // Aspetta che il bottone sia visibile
-  await page.waitForSelector(
-    "#root > div.min-h-screen.bg-background > header > div > div > div > a > button",
-    { timeout: 5000 },
-  );
+  const page = await browser.newPage();
 
-  // Clicca il bottone
-  await page.click(
-    "#root > div.min-h-screen.bg-background > header > div > div > div > a > button",
-  );
+  const URL = "https://carphub.it/";
+  console.log("🌍 Vado su:", URL);
 
-  console.log("Bottone cliccato!");
+  await page.goto(URL, { waitUntil: "networkidle" });
+  console.log("✅ Pagina caricata");
 
+  const selector =
+    "#root > div.min-h-screen.bg-background > header > div > div > div > a > button";
+
+  console.log("🔍 Cerco il bottone...");
+  await page.waitForSelector(selector, { timeout: 15000 });
+  console.log("✅ Bottone trovato");
+
+  // INFO VISIVE SUL BOTTONE
+  const text = await page.textContent(selector);
+  const box = await page.locator(selector).boundingBox();
+
+  console.log("📝 Testo bottone:", text?.trim());
+  console.log("📐 Posizione bottone:", box);
+
+  console.log("🖱️ CLICK!");
+  await page.click(selector);
+
+  console.log("🎉 Bottone cliccato correttamente");
+
+  await page.waitForTimeout(4000); // per vedere cosa succede dopo
   await browser.close();
+
+  console.log("🛑 Browser chiuso, test finito");
 })();
